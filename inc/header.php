@@ -8,4 +8,5 @@
     <link rel="stylesheet" href="bootstrap.min.css">
 </head>
 <body>
-<?php include('navbar.php'); ?>;
+
+<?php include('navbar.php'); ?>

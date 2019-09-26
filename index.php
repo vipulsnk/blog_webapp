@@ -3,7 +3,7 @@
    require('config/db.php');
 
    // create query
-   $query = 'SELECT * FROM posts';
+   $query = 'SELECT * FROM posts ORDER BY created_at DESC';
 
    // get result
 
@@ -22,11 +22,9 @@
    mysqli_close($conn);
 
 ?>
-
 <?php include('inc/header.php'); ?>
 <div class="container">
     <h1>Posts</h1>
-
     <?php foreach($posts as $post): ?>
         <div class="well">
             <h3><?php echo $post['title']; ?></h3>
@@ -37,4 +35,5 @@
         </div>
     <?php endforeach; ?>
 </div>
+
 <?php include('inc/footer.php'); ?>
