@@ -1,18 +1,26 @@
 <?php
    require('config/config.php');
    require('config/db.php');
-
+   session_start();
+    if(isset($_SESSION['user_id'])){
+        // no user should be logged in
+    }else{
+        header('Location: '.ROOT_URL.'');
+    }
    // check for submit
 
    if(isset($_POST['submit'])){
        // get form data
-       $title = mysqli_real_escape_string($conn, $_POST['title']);
-       $body = mysqli_real_escape_string($conn, $_POST['body']);
-       $author = mysqli_real_escape_string($conn, $_POST['author']);
+       $title = htmlspecialchars($_POST['title']);
+       $body = htmlspecialchars($_POST['body']);
+       $author = htmlspecialchars($_POST['author']);
+       $title = mysqli_real_escape_string($conn, $title);
+       $body = mysqli_real_escape_string($conn, $body);
+       $author = mysqli_real_escape_string($conn, $author);
 
        $query = "INSERT INTO posts(title, author, body) VALUES('$title', '$author', '$body')";
         if(mysqli_query($conn, $query)){
-            header('Location: '.ROOT_URL.'');
+            header('Location: '.ROOT_URL.'home.php');
         }else{
             echo 'ERROR '.mysqli_error($conn);
         }
