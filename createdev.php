@@ -1,6 +1,10 @@
 <?php
     require('config/config.php');
     require('config/db.php');   
+    session_start();
+    if(!isset($_SESSION['user_id'])){
+        header("Location: ".ROOT_URL."");
+    }
     // msg vars
     $msg = '';
     $msgClass = '';
@@ -22,11 +26,17 @@
                 $res = mysqli_fetch_all($r1, MYSQLI_ASSOC);
                 if(empty($res)){
                     // empty array, unique user
+                    $q1 = "CREATE USER '$user_name'@'localhost' IDENTIFIED WITH mysql_native_password BY '$password';";
+                    $q1 .= "GRANT 'dev'@'localhost' TO '$user_name'@'localhost';";
+                    $q1 .= "SET DEFAULT ROLE 'dev'@'localhost' TO '$user_name'@'localhost';";
+                    if(!mysqli_multi_query($conn_admin, $q1)){
+                        echo 'ERROR '.mysqli_error($conn_admin);
+                    }
                     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                     $query = "INSERT INTO user_base(first_name, last_name, user_name, password, role) 
-                                VALUES('$first_name', '$last_name', '$user_name', '$hashed_password', 'c_user')";
+                                VALUES('$first_name', '$last_name', '$user_name', '$hashed_password', 'dev')";
                     if(mysqli_query($conn, $query)){
-                        header('Location: '.ROOT_URL.'index.php');
+                        header('Location: '.ROOT_URL.'admin.php');
                     }else{
                         echo 'ERROR '.mysqli_error($conn);
                     }
@@ -48,23 +58,9 @@
         }
     }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="bootstrap.min.css">
-</head>
-
-<body>
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="index.php">Blog</a>
-            </div>
-        </div>
-    </nav>
-
+<?php include('inc/header.php'); ?>
     <div class="container">
+        <br>
         <?php if($msg != ''): ?>
             <div class="alert <?php echo $msgClass; ?>"><?php echo $msg; ?></div>
         <?php endif; ?>
@@ -94,5 +90,5 @@
             Submit</button>
         </form>
     </div>
-</body>
-</html>
+
+    <?php include('inc/footer.php'); ?>

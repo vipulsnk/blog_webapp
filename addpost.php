@@ -1,30 +1,23 @@
 <?php
-   require('config/config.php');
-   require('config/db.php');
-   session_start();
-    if(isset($_SESSION['user_id'])){
-        // no user should be logged in
-    }else{
+    require('config/config.php');
+    require('config/db.php');
+    session_start();
+    if(!isset($_SESSION['user_id'])){
         header('Location: '.ROOT_URL.'');
     }
-   // check for submit
-
-   if(isset($_POST['submit'])){
-       // get form data
-       $title = htmlspecialchars($_POST['title']);
-       $body = htmlspecialchars($_POST['body']);
-       $author = htmlspecialchars($_POST['author']);
-       $title = mysqli_real_escape_string($conn, $title);
-       $body = mysqli_real_escape_string($conn, $body);
-       $author = mysqli_real_escape_string($conn, $author);
-
-       $query = "INSERT INTO posts(title, author, body) VALUES('$title', '$author', '$body')";
+    if(isset($_POST['submit'])){
+        $title = htmlspecialchars($_POST['title']);
+        $body = htmlspecialchars($_POST['body']);
+        $title = mysqli_real_escape_string($conn, $title);
+        $body = mysqli_real_escape_string($conn, $body);
+        $author = $_SESSION['user_name'];
+        $query = "INSERT INTO posts(title, author, body) VALUES('$title', '$author', '$body')";
         if(mysqli_query($conn, $query)){
             header('Location: '.ROOT_URL.'home.php');
         }else{
             echo 'ERROR '.mysqli_error($conn);
         }
-   }
+    }
 ?>
 <?php include('inc/header.php'); ?>
 <div class="container">
@@ -35,15 +28,10 @@
             <input type="text" name="title" class="form-control">
         </div>
         <div class="form-group">
-            <label>Author</label>
-            <input type="text" name="author" class="form-control">
-        </div>
-        <div class="form-group">
             <label>Body</label>
             <textarea name="body" class="form-control"></textarea>
         </div>
         <input type="submit" name="submit" value="Submit" class="btn btn-primary">
     </form>
 </div>
-
 <?php include('inc/footer.php'); ?>
